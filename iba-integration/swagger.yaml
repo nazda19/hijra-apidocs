@@ -1,0 +1,312 @@
+openapi: 3.0.0
+x-stoplight:
+  id: d8mu98mif94ku
+info:
+  title: Partner - IBA
+  version: '1.0'
+servers:
+  - url: 'http://localhost:8085/api/v1/iba'
+paths:
+  /account:
+    get:
+      summary: Get Account
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  statusCode:
+                    type: string
+                  statusDescription:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Account'
+              examples:
+                Basic:
+                  value:
+                    timestamp: '2022-12-15T12:20:00.000+07:00'
+                    statusCode: '00'
+                    statusDescription: Success
+                    data:
+                      accountNumber: '110100001234'
+                      accountName: Fulan
+                      accountState: ACTIVE
+                      availableBalance: 500000
+                Full:
+                  value:
+                    timestamp: '2022-12-15T12:20:00.000+07:00'
+                    statusCode: '00'
+                    statusDescription: Success
+                    data:
+                      accountNumber: '110100001234'
+                      accountName: Fulan
+                      accountState: ACTIVE
+                      availableBalance: 500000
+                      holdBalance: 20000
+                      blockedBalance: 30000
+                      relationshipManagerCode: '110'
+                      createdDate: '2021-08-20T13:50:30.000+07:00'
+                      updatedDate: '2021-12-15T09:10:20.000+07:00'
+                      approvedDate: '2021-08-20T13:50:30.000+07:00'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          $ref: '#/components/responses/DataNotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalErrorResponse'
+      operationId: get-account
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: accountNumber
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: accountType
+          required: true
+          description: 'D (time deposit), S (regular saving)'
+        - schema:
+            type: string
+          in: header
+          name: Trace-ID
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Api-Key
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Signature
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: detailsLevel
+          description: 'BASIC, FULL'
+      description: Get account information by account number and account type
+  /accounts:
+    get:
+      summary: Get Accounts
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  statusCode:
+                    type: string
+                  statusDescription:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SimpleAccount'
+              examples:
+                Basic:
+                  value:
+                    timestamp: '2022-12-15T12:20:00.000+07:00'
+                    statusCode: '00'
+                    statusDescription: Success
+                    data:
+                      - accountNumber: '110100001234'
+                        accountType: REGULAR_SAVINGS
+                        accountState: ACTIVE
+                        availableBalance: 500000
+                        relationshipManagerCode: '110'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          $ref: '#/components/responses/DataNotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalErrorResponse'
+      operationId: get-accounts
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Trace-ID
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Api-Key
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Signature
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: cif
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: detailsLevel
+          description: 'BASIC, FULL'
+        - schema:
+            type: string
+          in: query
+          name: offset
+          description: Starts from 0
+        - schema:
+            type: string
+          in: query
+          name: limit
+      description: Get information of account(s) with specified CIF
+components:
+  schemas:
+    Account:
+      type: object
+      x-examples:
+        Fulan:
+          accountNumber: '110100001234'
+          accountName: Fulan
+          accountState: ACTIVE
+          availableBalance: 500000
+          holdBalance: 20000
+          blockedBalance: 30000
+          relationshipManagerCode: '110'
+          createdDate: '2021-08-20T13:50:30.000+07:00'
+          updatedDate: '2021-12-15T09:10:20.000+07:00'
+          approvedDate: '2021-08-20T13:50:30.000+07:00'
+      properties:
+        accountNumber:
+          type: string
+        accountName:
+          type: string
+        accountState:
+          type: string
+        availableBalance:
+          type: number
+        holdBalance:
+          type: number
+        blockedBalance:
+          type: number
+        relationshipManagerCode:
+          type: string
+        createdDate:
+          type: string
+        updatedDate:
+          type: string
+        approvedDate:
+          type: string
+      required:
+        - accountNumber
+        - accountName
+        - accountState
+        - availableBalance
+      title: Account
+    SimpleAccount:
+      title: SimpleAccount
+      x-stoplight:
+        id: 4ll1cgt0c8xzb
+      type: object
+      properties:
+        accountNumber:
+          type: string
+        accountType:
+          type: string
+        accountState:
+          type: string
+        availableBalance:
+          type: number
+        relationshipManagerCode:
+          type: string
+      x-examples:
+        Fulan:
+          accountNumber: '110100001234'
+          accountType: REGULAR_SAVINGS
+          accountState: ACTIVE
+          availableBalance: 500000
+          relationshipManagerCode: '110'
+  responses:
+    UnauthorizedResponse:
+      description: Unauthorized response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: string
+              statusCode:
+                type: string
+              statusDescription:
+                type: string
+              data:
+                type: object
+          examples:
+            Invalid API Key:
+              value:
+                timestamp: '2022-12-15T12:20:00.000+07:00'
+                statusCode: PI-100
+                statusDescription: Invalid API key
+                data: null
+            Invalid Signature:
+              value:
+                timestamp: '2022-12-15T12:20:00.000+07:00'
+                statusCode: PI-101
+                statusDescription: Invalid signature
+                data: null
+    DataNotFoundResponse:
+      description: Data not found response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: string
+              statusCode:
+                type: string
+              statusDescription:
+                type: string
+              data:
+                type: string
+          examples:
+            Data Not Found:
+              value:
+                timestamp: '2022-12-15T12:20:00.000+07:00'
+                statusCode: PI-37
+                statusDescription: Data not found
+                data: null
+    InternalErrorResponse:
+      description: Internal error response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: string
+              statusCode:
+                type: string
+              statusDescription:
+                type: string
+              data:
+                type: string
+          examples:
+            Internal Error:
+              value:
+                timestamp: '2022-12-15T12:20:00.000+07:00'
+                statusCode: PI-99
+                statusDescription: Internal server error
+                data: null
