@@ -72,7 +72,7 @@ paths:
           in: query
           name: accountType
           required: true
-          description: 'D (time deposit), S (regular saving)'
+          description: 'DEPOSIT, SAVING'
         - schema:
             type: string
           in: header
