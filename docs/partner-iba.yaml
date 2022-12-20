@@ -159,11 +159,6 @@ paths:
         - schema:
             type: string
           in: query
-          name: detailsLevel
-          description: 'BASIC, FULL'
-        - schema:
-            type: string
-          in: query
           name: offset
           description: Starts from 0
         - schema:
