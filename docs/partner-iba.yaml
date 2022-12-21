@@ -37,7 +37,7 @@ paths:
                       accountNumber: '110100001234'
                       accountName: Fulan
                       accountState: ACTIVE
-                      availableBalance: 500000
+                      availableBalance: '500000.00'
                 Full:
                   value:
                     timestamp: '2022-12-15T12:20:00.000+07:00'
@@ -47,9 +47,9 @@ paths:
                       accountNumber: '110100001234'
                       accountName: Fulan
                       accountState: ACTIVE
-                      availableBalance: 500000
-                      holdBalance: 20000
-                      blockedBalance: 30000
+                      availableBalance: '500000.00'
+                      holdBalance: '20000.00'
+                      blockedBalance: '30000.00'
                       relationshipManagerCode: '110'
                       createdDate: '2021-08-20T13:50:30.000+07:00'
                       updatedDate: '2021-12-15T09:10:20.000+07:00'
@@ -126,7 +126,7 @@ paths:
                       - accountNumber: '110100001234'
                         accountType: REGULAR_SAVINGS
                         accountState: ACTIVE
-                        availableBalance: 500000
+                        availableBalance: '500000.00'
                         relationshipManagerCode: '110'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
@@ -175,13 +175,14 @@ components:
           accountNumber: '110100001234'
           accountName: Fulan
           accountState: ACTIVE
-          availableBalance: 500000
-          holdBalance: 20000
-          blockedBalance: 30000
+          availableBalance: '500000.00'
+          holdBalance: '20000.00'
+          blockedBalance: '30000.00'
           relationshipManagerCode: '110'
           createdDate: '2021-08-20T13:50:30.000+07:00'
           updatedDate: '2021-12-15T09:10:20.000+07:00'
           approvedDate: '2021-08-20T13:50:30.000+07:00'
+      title: Account
       properties:
         accountNumber:
           type: string
@@ -190,11 +191,11 @@ components:
         accountState:
           type: string
         availableBalance:
-          type: number
+          type: string
         holdBalance:
-          type: number
+          type: string
         blockedBalance:
-          type: number
+          type: string
         relationshipManagerCode:
           type: string
         createdDate:
@@ -208,12 +209,18 @@ components:
         - accountName
         - accountState
         - availableBalance
-      title: Account
     SimpleAccount:
       title: SimpleAccount
       x-stoplight:
         id: 4ll1cgt0c8xzb
       type: object
+      x-examples:
+        Fulan:
+          accountNumber: '110100001234'
+          accountType: REGULAR_SAVINGS
+          accountState: ACTIVE
+          availableBalance: '500000'
+          relationshipManagerCode: '110'
       properties:
         accountNumber:
           type: string
@@ -222,16 +229,9 @@ components:
         accountState:
           type: string
         availableBalance:
-          type: number
+          type: string
         relationshipManagerCode:
           type: string
-      x-examples:
-        Fulan:
-          accountNumber: '110100001234'
-          accountType: REGULAR_SAVINGS
-          accountState: ACTIVE
-          availableBalance: 500000
-          relationshipManagerCode: '110'
   responses:
     UnauthorizedResponse:
       description: Unauthorized response
