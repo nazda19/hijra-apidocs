@@ -7,9 +7,9 @@ info:
 servers:
   - url: 'http://localhost:8085/api/v1/iba'
 paths:
-  /account:
+  /funding/account:
     get:
-      summary: Get Account
+      summary: Get Funding Account
       tags: []
       responses:
         '200':
@@ -60,7 +60,7 @@ paths:
           $ref: '#/components/responses/DataNotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalErrorResponse'
-      operationId: get-account
+      operationId: get-funding-account
       parameters:
         - schema:
             type: string
@@ -93,10 +93,11 @@ paths:
           in: query
           name: detailsLevel
           description: 'BASIC, FULL'
-      description: Get account information by account number and account type
-  /accounts:
+      description: Get funding account information by account number and account type
+    parameters: []
+  /funding/accounts:
     get:
-      summary: Get Accounts
+      summary: Get Funding Accounts
       tags: []
       responses:
         '200':
@@ -134,7 +135,7 @@ paths:
           $ref: '#/components/responses/DataNotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalErrorResponse'
-      operationId: get-accounts
+      operationId: get-funding-accounts
       parameters:
         - schema:
             type: string
@@ -165,7 +166,8 @@ paths:
             type: string
           in: query
           name: limit
-      description: Get information of account(s) with specified CIF
+      description: Get information of funding account(s) with specified CIF
+    parameters: []
 components:
   schemas:
     Account:
