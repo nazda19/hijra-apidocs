@@ -4,13 +4,18 @@ x-stoplight:
 info:
   title: Partner - IBA
   version: '1.0'
+  description: API for Mambu - IBA Integration
 servers:
   - url: 'http://localhost:8085/api/v1/iba'
+tags:
+  - name: account
+  - name: transaction
 paths:
   /funding/account:
     get:
       summary: Get Funding Account
-      tags: []
+      tags:
+        - account
       responses:
         '200':
           description: OK
@@ -37,7 +42,7 @@ paths:
                       accountNumber: '110100001234'
                       accountName: Fulan
                       accountState: ACTIVE
-                      availableBalance: '500000.00'
+                      availableBalance: 500000.55
                 Full:
                   value:
                     timestamp: '2022-12-15T12:20:00.000+07:00'
@@ -47,9 +52,9 @@ paths:
                       accountNumber: '110100001234'
                       accountName: Fulan
                       accountState: ACTIVE
-                      availableBalance: '500000.00'
-                      holdBalance: '20000.00'
-                      blockedBalance: '30000.00'
+                      availableBalance: 500000.55
+                      holdBalance: 20000.55
+                      blockedBalance: 30000.55
                       relationshipManagerCode: '110'
                       createdDate: '2021-08-20T13:50:30.000+07:00'
                       updatedDate: '2021-12-15T09:10:20.000+07:00'
@@ -98,7 +103,8 @@ paths:
   /funding/accounts:
     get:
       summary: Get Funding Accounts
-      tags: []
+      tags:
+        - account
       responses:
         '200':
           description: OK
@@ -127,7 +133,7 @@ paths:
                       - accountNumber: '110100001234'
                         accountType: REGULAR_SAVINGS
                         accountState: ACTIVE
-                        availableBalance: '500000.00'
+                        availableBalance: 500000.55
                         relationshipManagerCode: '110'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
@@ -168,6 +174,89 @@ paths:
           name: limit
       description: Get information of funding account(s) with specified CIF
     parameters: []
+  /transactions:
+    parameters: []
+    post:
+      summary: Create Transaction
+      operationId: create-transaction
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  statusCode:
+                    type: string
+                  statusDescription:
+                    type: string
+              examples:
+                Success:
+                  value:
+                    timestamp: '2023-02-08T13:20:30.45+01:00'
+                    statusCode: PI-01
+                    statusDescription: Created
+      description: Create a transaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rrn:
+                  type: string
+                  description: Unique reference number provided by client to identify the request
+                dateTime:
+                  type: string
+                  description: 'Date and time when the transaction occurs. It must be in ISO 8601 full datetime format (**YYYY-MM-DDThh:mm:ss.sTZD**). For example, `1997-07-16T19:20:30.45+01:00`.'
+                routingId:
+                  type: string
+                  description: ID that identifies the transaction type
+                amount:
+                  type: number
+                  description: Amount is in decimal format with maximum 10 integral digits and 2 fractional digits. For example `9876543210.99`.
+                  minimum: 0
+                  maximum: 9999999999
+                notes:
+                  type: string
+                  description: |
+                    Additional information related to the transaction. Recommended format: [**transaction_type**][space][**product_name**][space][dash][space][**receipt_number**][space][dash][space][**customer_name**]. Example: `Penempatan HIJRA DEPOSITO MUDHARABAH - HD0123456 - ABDULLAH`
+                user:
+                  type: string
+                  description: Username of the customer from whom the transaction originates. Leave it `null` when username is not available.
+                debitAccount:
+                  type: string
+                  description: Account number from which the amount is debited. This field is conditionally mandatory depending on the transaction type. Leave it `null` when it is not required.
+                creditAccount:
+                  type: string
+                  description: Account number to which the amount is credited. This field is conditionally mandatory depending on the transaction type. Leave it `null` when it is not required.
+                extraData:
+                  type: object
+                  description: |
+                    Additional data that is required in specific transaction type. **NOTE**: this field structure is not yet finalized.
+              required:
+                - rrn
+                - dateTime
+                - routingId
+                - amount
+                - notes
+            examples:
+              Deposito Opening:
+                value:
+                  rrn: '123456789012'
+                  dateTime: '2023-02-08T13:20:30.45+01:00'
+                  routingId: '2023014000001'
+                  amount: 100000
+                  notes: Penempatan HIJRA DEPOSITO MUDHARABAH - HD0123456 - ABDULLAH
+                  user: abdullah
+                  debitAccount: '1010100000041'
+                  creditAccount: null
+                  extraData: {}
+      tags:
+        - transaction
 components:
   schemas:
     Account:
@@ -177,9 +266,9 @@ components:
           accountNumber: '110100001234'
           accountName: Fulan
           accountState: ACTIVE
-          availableBalance: '500000.00'
-          holdBalance: '20000.00'
-          blockedBalance: '30000.00'
+          availableBalance: 500000.55
+          holdBalance: 20000.55
+          blockedBalance: 30000.55
           relationshipManagerCode: '110'
           createdDate: '2021-08-20T13:50:30.000+07:00'
           updatedDate: '2021-12-15T09:10:20.000+07:00'
@@ -193,11 +282,11 @@ components:
         accountState:
           type: string
         availableBalance:
-          type: string
+          type: number
         holdBalance:
-          type: string
+          type: number
         blockedBalance:
-          type: string
+          type: number
         relationshipManagerCode:
           type: string
         createdDate:
@@ -221,7 +310,7 @@ components:
           accountNumber: '110100001234'
           accountType: REGULAR_SAVINGS
           accountState: ACTIVE
-          availableBalance: '500000'
+          availableBalance: 500000.55
           relationshipManagerCode: '110'
       properties:
         accountNumber:
@@ -231,7 +320,7 @@ components:
         accountState:
           type: string
         availableBalance:
-          type: string
+          type: number
         relationshipManagerCode:
           type: string
   responses:
